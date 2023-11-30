@@ -34,4 +34,12 @@ body {
   text-transform: capitalize;
   text-align: center;
   cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.list-item:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
 }
