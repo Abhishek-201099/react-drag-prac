@@ -14,9 +14,16 @@ body {
   line-height: 1;
 }
 
+.parent-container {
+  width: 50rem;
+  margin: 0 auto;
+  display: flex;
+  gap: 5rem;
+}
+
 .container {
-  width: 60rem;
-  margin: 4rem auto;
+  width: 40rem;
+  /* margin: 4rem auto; */
   font-size: 2.4rem;
   background-color: blueviolet;
   padding: 4rem;
@@ -37,6 +44,10 @@ body {
   cursor: -moz-grab;
   cursor: -webkit-grab;
  */
+}
+
+.list-item:not(:last-child) {
+  margin-bottom: 2rem;
 }
 
 /* .list-item:active {
