@@ -8,55 +8,48 @@ export default function AppV2() {
   const [draggableItemsOne, setDraggableItemsOne] = useState(listItemsOne);
   const [draggableItemsTwo, setDraggableItemsTwo] = useState(listItemsTwo);
 
+  function getItemsAndSetState(id) {
+    const items =
+      id.split("-").at(0) === "FIRST"
+        ? [...draggableItemsOne]
+        : [...draggableItemsTwo];
+
+    return {
+      items,
+      setState:
+        id.split("-").at(0) === "FIRST"
+          ? setDraggableItemsOne
+          : setDraggableItemsTwo,
+    };
+  }
+
   function handleDragEnd(results) {
     const { source, destination, type } = results;
 
-    if (type === "darkgone") {
-      // FOR THE SAME DROPPABLE CONTAINER
-      if (source.droppableId === destination.droppableId) {
-        const updatedItems =
-          source.droppableId.split("-").at(0) === "FIRST"
-            ? [...draggableItemsOne]
-            : [...draggableItemsTwo];
-        const draggedItem = updatedItems[source.index];
-        updatedItems.splice(source.index, 1);
-        updatedItems.splice(destination.index, 0, draggedItem);
-        if (source.droppableId.split("-").at(0) === "FIRST") {
-          setDraggableItemsOne([...updatedItems]);
-        } else if (source.droppableId.split("-").at(0) === "SECOND") {
-          setDraggableItemsTwo([...updatedItems]);
-        }
-      }
+    if (!source || !destination) return;
 
-      // FOR DIFFERENT DROPPABLE CONTAINERS
-      if (source.droppableId !== destination.droppableId) {
-        // 1. REMOVE THE ELEMENT FROM THE SOURCE INDEX
-        const sourceItems =
-          source.droppableId.split("-").at(0) === "FIRST"
-            ? [...draggableItemsOne]
-            : [...draggableItemsTwo];
-        const destinationItems =
-          destination.droppableId.split("-").at(0) === "FIRST"
-            ? [...draggableItemsOne]
-            : [...draggableItemsTwo];
+    // ONLY WANT TO PERFORM DND IF DROPPABLE AREA IS OF TYPE DARKGONE
+    if (type !== "darkgone") return;
 
-        const draggedItem = sourceItems[source.index];
-        sourceItems.splice(source.index, 1);
-
-        // 2. ADD THE ELEMENT IN THE DESTINATION INDEX
-        destinationItems.splice(destination.index, 0, draggedItem);
-
-        // 3. UPDATE THE STATE
-        if (source.droppableId.split("-").at(0) === "FIRST") {
-          setDraggableItemsOne([...sourceItems]);
-          setDraggableItemsTwo([...destinationItems]);
-        }
-
-        if (source.droppableId.split("-").at(0) === "SECOND") {
-          setDraggableItemsOne([...destinationItems]);
-          setDraggableItemsTwo([...sourceItems]);
-        }
-      }
+    // 1. For same droppable area
+    if (source.droppableId === destination.droppableId) {
+      const { items, setState } = getItemsAndSetState(source.droppableId);
+      const draggedItem = items[source.index];
+      items.splice(source.index, 1);
+      items.splice(destination.index, 0, draggedItem);
+      setState(items);
+    } else {
+      // 2. For different droppable area
+      const { items: sourceItems, setState: setSourceState } =
+        getItemsAndSetState(source.droppableId);
+      const { items: destItems, setState: setDestState } = getItemsAndSetState(
+        destination.droppableId
+      );
+      const draggedItem = sourceItems[source.index];
+      sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, draggedItem);
+      setSourceState(sourceItems);
+      setDestState(destItems);
     }
   }
 
